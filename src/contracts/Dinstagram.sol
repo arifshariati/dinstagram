@@ -24,11 +24,18 @@ contract Dinstagram {
         address payable author
     );
 
+    event ImageTipped(
+        uint256 id,
+        string hash,
+        string description,
+        uint256 tipAmount,
+        address payable author
+    );
+
     //  Create Images
     function uploadImage(string memory _imgHash, string memory _description)
         public
     {
-
         // Make sure image hash exists
         require(bytes(_imgHash).length > 0);
 
@@ -61,4 +68,33 @@ contract Dinstagram {
     }
 
     //  Tip Images
+    function tipImageOwner(uint256 _id) public payable {
+
+        // Make sure _id is valid 
+        require(_id > 0 && _id <= imageCount);
+        
+        // Fetch image from storage
+        Image memory _image = images[_id];
+
+        // Fetch image author / owner
+        address payable _author = _image.author;
+
+        // Pay Author / owner with Ether
+        _author.transfer(msg.value);
+
+        // Increment the tip amount
+        _image.tipAmount = _image.tipAmount + msg.value;
+
+        // Update image
+        images[_id] = _image;
+
+        // Trigger an event
+        emit ImageTipped(
+            _id,
+            _image.hash,
+            _image.description,
+            _image.tipAmount,
+            _author
+        );
+    }
 }
