@@ -3,6 +3,7 @@ import Dinstagram from '../abis/Dinstagram.json';
 
 let selectedAccount, dinstagramContract;
 let isInitialized = false;
+let imagesCount = 0;
 
 export const init = async () => {
 
@@ -25,10 +26,17 @@ export const init = async () => {
             // console.log(`Selected Account Changed to ${selectedAccount}`);
         });
 
-        // const web3 = new Web3(provider);
+        const web3 = new Web3(provider);
 
-        // const networkId = await web3.eth.net.getId();
+        const networkId = await web3.eth.net.getId();
 
+        dinstagramContract = new web3.eth.Contract(
+            Dinstagram.abi,
+            Dinstagram.networks[networkId].address
+        );
+
+        // imagesCount = await dinstagramContract.methods.imageCount().call();
+        
         // const gasPrice = await web3.eth.getGasPrice();
 
         // console.log(`selectedAccount ===> ${selectedAccount}`);
@@ -39,5 +47,5 @@ export const init = async () => {
 
     }
 
-    return selectedAccount;
+    return { selectedAccount, dinstagramContract, imagesCount };
 };
