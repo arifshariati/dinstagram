@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from "@mui/material/styles";
 import { init } from './web3/web3Client';
-import { TopBar, ImageCard } from './organisms';
+import { TopBar, UploadForm, ImageCard } from './organisms';
 
 import theme from "./theme";
 import { Container, Grid } from '@mui/material';
@@ -47,7 +47,7 @@ function App() {
       <Container maxWidth="sm">
         <Grid container spacing={2} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <Grid item xs={12}>
-            <h3>Form Goes Here</h3>
+            <UploadForm />
           </Grid>
           <Grid item xs={12}>
             <ImageCard />
