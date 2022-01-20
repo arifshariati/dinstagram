@@ -8816,12 +8816,12 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0xdb4dd030AB11bD448159eFa767359c6E351b5215",
-      "transactionHash": "0xed854dbf0343bed7ae17c52e81a1fcd5a6d140b5e4cefe7cdb98c27d3a6efea2"
+      "address": "0x85A2eC4082A13075fAD85979d948fc3E852E5FF1",
+      "transactionHash": "0x28c7635114923e52dae0f1e91550fd582a8c28cdb440a4faaa2e7d34976a1c87"
     }
   },
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-01-20T10:43:03.665Z",
+  "updatedAt": "2022-01-20T14:30:39.387Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

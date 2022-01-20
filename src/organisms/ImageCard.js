@@ -6,25 +6,40 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-const ImageCard = () => {
+const ImageCard = ({ account, image, dinstagram }) => {
+    let tipAmount = window.web3.utils.toWei('0.1', 'Ether');
+
+    const handleTip = async () => {
+        await dinstagram.methods.tipImageOwner(image.author).send({ from: account, value: tipAmount }).on('transactionHash', (hash) => {
+            console.log('Tipped');
+        });
+    };
+
     return (
         <Card sx={{ maxWidth: '100%' }}>
             <CardMedia
                 component="img"
-                height="500px"
-                image="/pic.jpg"
+                height="300px"
+                image={`https://ipfs.infura.io/ipfs/${image.hash}`}
                 alt="hashed Image"
             />
             <CardContent>
                 <Typography gutterBottom variant="body2" component="div">
-                    0x7dbf3e9Bc1688A186A0B50a2EDEE2504e213AF17
+                    {image.description}
                 </Typography>
             </CardContent>
-            <CardActions style={{justifyContent:'space-between'}}>
+            <CardActions style={{ justifyContent: 'space-between' }}>
                 <Typography gutterBottom variant="h5" component="div">
-                    Tipped 9.4 ETH
+                    Tipped {window.web3.utils.fromWei(image.tipAmount.toString(), 'Ether')} ETH
                 </Typography>
-                <Button size="small" variant={'contained'}>TIP 0.1 ETH</Button>
+                <Button
+                    size="small"
+                    variant={'contained'}
+                    disabled={account === image.author ? true : false}
+                    onClick={handleTip}
+                >
+                    TIP 0.1 ETH
+                </Button>
             </CardActions>
         </Card>
     );

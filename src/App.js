@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from "@mui/material/styles";
-import { init } from './web3/web3Client';
+import { initWeb3, loadBlockChainData } from './web3/web3Client';
 import { TopBar, UploadForm, ImageCard } from './organisms';
 
 import theme from "./theme";
@@ -10,7 +10,9 @@ const initialValue = {
   account: '',
   dinstagram: null,
   imagesCount: 0,
-  imagse: [],
+  images: [],
+  buffer: null,
+  description: '',
   loading: false
 };
 
@@ -24,38 +26,47 @@ function App() {
       loading: true
     });
     (async () => {
-      let { selectedAccount, dinstagramContract, imagesCount } = await init();
+      await initWeb3();
+      const {
+        account,
+        dinstagram,
+        imageCount,
+        images,
+        errors } = await loadBlockChainData();
 
-      setValues({
-        ...values,
-        account: selectedAccount,
-        dinstagram: dinstagramContract,
-        imagesCount,
-        images: [],
-        loading: false
-      });
-      // setAccount(selectedAccount);
-      // console.log(`dinstagramContract ==> ${dinstagramContract.address}`);
+      if (errors.length > 0) {
+        window.alert(errors);
+      } else {
+        setValues({
+          ...values,
+          account,
+          dinstagram,
+          imageCount,
+          images,
+          loading: false
+        })
+      }
     })()
   }, []);
 
-  console.log(`imagesCount => ${values.imagesCount}`);
+  // console.log(values.images);
 
   return (
     <ThemeProvider theme={theme}>
       <TopBar account={values.account} />
-      <Container maxWidth="sm">
+      <Container maxWidth="lg">
         <Grid container spacing={2} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <Grid item xs={12}>
-            <UploadForm />
+            <UploadForm values={values} setValues={setValues} />
           </Grid>
-          <Grid item xs={12}>
-            <ImageCard />
-          </Grid>
+          {
+            values.images.map((image, index) =>
+              <Grid item xs={6} sm={6} md={6} lg={3} key={index}>
+                <ImageCard account={values.account} image={image} dinstagram={values.dinstagram} />
+              </Grid>
+            )
+          }
 
-          <Grid item xs={12}>
-            <ImageCard />
-          </Grid>
         </Grid>
       </Container>
 

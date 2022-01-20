@@ -26,7 +26,7 @@ const TopBar = ({ account }) => {
                             sx={{ mr: 2, display: { xs: 'flex' } }}
                             color='white'
                         >
-                            {account}
+                            Connected Wallet {account}
                         </Typography>
                     </Toolbar>
                 </Container>

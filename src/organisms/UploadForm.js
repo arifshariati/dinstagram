@@ -1,23 +1,48 @@
-import { useState, useRef } from 'react';
-import { Grid, Button, Paper, TextField, Typography } from '@mui/material'
-import React from 'react'
+import { useState } from 'react';
+import { create } from 'ipfs-http-client';
+import { useRef } from 'react';
+import { Grid, Button, Paper, TextField } from '@mui/material'
 
-const defaultValues = {
-    description: ''
-};
+const ipfs = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
-const UploadForm = () => {
+const UploadForm = ({ values, setValues }) => {
 
-    const [values, setValues] = useState(defaultValues);
-
+    const [buttonEnabled, setButtonEnabled] = useState(false);
     const uploadInputRef = useRef(null);
 
-    const onChange = () => {
-        alert('I am called');
-    };
+    const handleDescription = (e) => {
+        setValues({ ...values, description: e.target.value });
 
-    const handleUploadImage = () =>{
-        console.log('I am here');
+        if (values.description.length > 0) {
+            setButtonEnabled(true);
+        }
+    }
+
+    const onChange = async (e) => {
+        e.preventDefault();
+
+        const reader = new window.FileReader()
+        reader.readAsArrayBuffer(e.target.files[0])
+
+        reader.onloadend = () => {
+
+            setValues({ ...values, buffer: Buffer(reader.result) })
+
+        }
+    }
+
+    const handleUploadImage = async () => {
+
+        //adding file to the IPFS
+        const result = await ipfs.add(values.buffer);
+
+        setValues({ ...values, loading: true });
+
+        values.dinstagram.methods.uploadImage(result.path, values.description).send({ from: values.account }).on('transactionHash', (hash) => {
+            setValues({ ...values, loading: false });
+        })
+
+        setButtonEnabled(false);
     }
 
     return (
@@ -32,7 +57,6 @@ const UploadForm = () => {
                         onChange={onChange}
                     />
                     <Button
-                        variant={'contained'}
                         color={'secondary'}
                         onClick={() => uploadInputRef.current && uploadInputRef.current.click()}
                     >
@@ -40,12 +64,14 @@ const UploadForm = () => {
                     </Button>
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField fullWidth name={'description'} value={values.description} multiline rows={'4'} />
+                    <TextField fullWidth name={'description'} value={values.description} onChange={handleDescription} multiline rows={'4'} />
                 </Grid>
                 <Grid item xs={12}>
                     <Button
                         variant={'contained'}
-                        onClick={() => handleUploadImage}
+                        color={'secondary'}
+                        disabled={!buttonEnabled}
+                        onClick={handleUploadImage}
                     >
                         Upload Image
                     </Button>
