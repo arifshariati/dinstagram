@@ -16,6 +16,10 @@ const UploadForm = () => {
         alert('I am called');
     };
 
+    const handleUploadImage = () =>{
+        console.log('I am here');
+    }
+
     return (
         <Paper elevation={1} style={{ padding: '0.5rem 1rem' }}>
             <Grid container spacing={2}>
